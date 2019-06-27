@@ -9,7 +9,7 @@
 \usepackage{url}
 
 
-\title{Formatting Instructions for ICLR 2020 / \\ Conference Submissions}
+\title{Formatting Instructions for ICLR 2020 \\ Conference Submissions}
 
 % Authors must not appear in the submitted version. They should be hidden
 % as long as the \iclrfinalcopy macro remains commented out below.
@@ -60,7 +60,7 @@ line spaces precede the abstract. The abstract must be limited to one
 paragraph.
 \end{abstract}
 
-\section{Submission of conference papers to ICLR 2019}
+\section{Submission of conference papers to ICLR 2020}
 
 ICLR requires electronic submissions, processed by
 \url{https://openreview.net/}. See ICLR's website for more instructions.
@@ -75,7 +75,7 @@ faithfully.
 
 \subsection{Style}
 
-Papers to be submitted to ICLR 2019 must be prepared according to the
+Papers to be submitted to ICLR 2020 must be prepared according to the
 instructions presented here.
 
 %% Please note that we have introduced automatic line number generation
@@ -90,16 +90,16 @@ not previous versions. Tweaking the style files may be grounds for rejection.
 
 \subsection{Retrieval of style files}
 
-The style files for ICLR and other conference information are available on the World Wide Web at
+The style files for ICLR and other conference information are available online at:
 \begin{center}
    \url{http://www.iclr.cc/}
 \end{center}
-The file \verb+iclr2019_conference.pdf+ contains these
+The file \verb+iclr2020_conference.pdf+ contains these
 instructions and illustrates the
 various formatting requirements your ICLR paper must satisfy.
 Submissions must be made using \LaTeX{} and the style files
-\verb+iclr2019_conference.sty+ and \verb+iclr2019_conference.bst+ (to be used with \LaTeX{}2e). The file
-\verb+iclr2019_conference.tex+ may be used as a ``shell'' for writing your paper. All you
+\verb+iclr2020_conference.sty+ and \verb+iclr2020_conference.bst+ (to be used with \LaTeX{}2e). The file
+\verb+iclr2020_conference.tex+ may be used as a ``shell'' for writing your paper. All you
 have to do is replace the author, title, abstract, and text of the paper with
 your own.
 
@@ -126,6 +126,12 @@ same address can be on the same line.
 
 Please pay special attention to the instructions in section \ref{others}
 regarding figures, tables, acknowledgments, and references.
+
+The recommended paper length is 8 pages, with unlimited additional pages for
+citations.  There will be a strict upper limit of 10 pages for the main text.
+Reviewers will be instructed to apply a higher standard to papers in excess of 8
+pages.  Authors may use as many pages of appendices (after the bibliography) as
+they wish, but reviewers are not required to read these.
 
 \section{Headings: first level}
 \label{headings}
@@ -156,9 +162,10 @@ These instructions apply to everyone, regardless of the formatter being used.
 Citations within the text should be based on the \texttt{natbib} package
 and include the authors' last names and year (with the ``et~al.'' construct
 for more than two authors). When the authors or the publication are
-included in the sentence, the citation should not be in parenthesis (as
+included in the sentence, the citation should not be in parenthesis using \verb|\citet{}| (as
 in ``See \citet{Hinton06} for more information.''). Otherwise, the citation
-should be in parenthesis (as in ``Deep learning shows promise to make progress towards AI~\citep{Bengio+chapter2007}.'').
+should be in parenthesis using \verb|\citep{}| (as in ``Deep learning shows promise to make progress 
+towards AI~\citep{Bengio+chapter2007}.'').
 
 The corresponding references are to be listed in alphabetical order of
 authors, in the \textsc{References} section. As to the format of the
@@ -390,13 +397,20 @@ See section~4.4 in the graphics bundle documentation (\url{http://www.ctan.org/t
 A number of width problems arise when LaTeX cannot properly hyphenate a
 line. Please give LaTeX hyphenation hints using the \verb+\-+ command.
 
+\subsubsection*{Author Contributions}
+If you'd like to, you may include  a section for author contributions as is done
+in many journals. This is optional and at the discretion of the authors.
 
 \subsubsection*{Acknowledgments}
-
 Use unnumbered third level headings for the acknowledgments. All
 acknowledgments, including those to funding agencies, go at the end of the paper.
 
-\bibliography{iclr2019_conference}
-\bibliographystyle{iclr2019_conference}
+
+\bibliography{iclr2020_conference}
+\bibliographystyle{iclr2020_conference}
+
+\appendix
+\section{Appendix}
+You may include other additional sections here. 
 
 \end{document}
