@@ -244,3 +244,100 @@ plus      -0.5ex minus -.2ex}{0.5ex plus
 % \hspace*{-1.8cm}
 % \colorbox[rgb]{0.7,0.7,0.7}{\small \parbox[b][\textheight]{0.1cm}{}}}
 % }
+
+% ----- keep page-broken links out of the header, footer and ruler
+% When a hyperref link (e.g. a citation) breaks across a page, pdfTeX turns
+% every box at the same nesting depth on the next page into part of that
+% link, which catches the footer, the header and the line-number ruler.
+% Running links are therefore switched on only for the text block.  The
+% zero-size anchors keep links that cross a page enlarged by
+% \enlargethispage attached to a box of their own depth.  Needs LaTeX
+% 2020-10 or later and pdfTeX 1.40.22+ or LuaTeX; otherwise nothing changes.
+\makeatletter
+\ifdefined\AddToHook\else
+  \expandafter\endinput
+\fi
+\ifdefined\pdfrunninglinkoff
+  % pdfTeX
+  \def\iclr@ifpdf{\ifnum\pdfoutput>\z@
+    \expandafter\@firstoftwo\else\expandafter\@secondoftwo\fi}
+  \protected\def\iclr@linkoff{\pdfrunninglinkoff}
+  \protected\def\iclr@linkon{\pdfrunninglinkon}
+\else
+  \ifdefined\luatexversion
+    \ifnum\luatexversion>112
+      \def\iclr@ifpdf{\ifnum\outputmode>\z@
+        \expandafter\@firstoftwo\else\expandafter\@secondoftwo\fi}
+      \protected\def\iclr@linkoff{\pdfextension linkstate 1\relax}
+      \protected\def\iclr@linkon{\pdfextension linkstate 0\relax}
+    \fi
+  \fi
+\fi
+\ifdefined\iclr@linkoff\else
+  \PackageInfo{iclr2027_conference}{No running-link control in this engine,
+    nothing changed}%
+  \expandafter\endinput
+\fi
+
+\newif\ificlr@special
+\newcount\iclr@pages
+
+% A zero-size anchor at the first baseline, so any annotation it gets lies
+% on the text.  The hbox must not be empty: pdfTeX skips empty boxes without
+% looking at running links.
+\def\iclr@anchor#1{\vbox to\z@{\kern\topskip#1\vss}\nointerlineskip}
+\def\iclr@hbox{\hbox{\kern\z@}}
+
+\def\iclr@outputpage{%
+  \global\advance\iclr@pages\@ne
+  \setbox\@outputbox\vbox{%
+    \boxmaxdepth\maxdimen
+    \iclr@linkon
+    % level of normal text lines, for a link coming onto an enlarged page
+    \ificlr@special \iclr@anchor{\iclr@hbox}\fi
+    % level of enlarged-page lines, for a link coming from an enlarged page
+    \iclr@anchor{\vbox{\iclr@hbox}}%
+    \box\@outputbox
+    \iclr@linkoff}%
+  \global\iclr@specialfalse
+  \iclr@orig@outputpage}
+
+% Install after all packages and \AtBeginDocument code have set up their
+% versions, and wrap whatever is there.  The kernel renamed the enlarged-page
+% column builder to \@make@specialcolbox in 2025; footmisc keeps the old name.
+\AddToHook{begindocument/end}{%
+  \iclr@ifpdf{%
+    \let\iclr@orig@outputpage\@outputpage
+    \let\@outputpage\iclr@outputpage
+    \ifdefined\@makespecialcolbox
+      \let\iclr@orig@makespecialcolbox\@makespecialcolbox
+      \def\@makespecialcolbox{\global\iclr@specialtrue\iclr@orig@makespecialcolbox}%
+    \fi
+    \ifdefined\@make@specialcolbox
+      \let\iclr@orig@make@specialcolbox\@make@specialcolbox
+      \def\@make@specialcolbox{\global\iclr@specialtrue\iclr@orig@make@specialcolbox}%
+    \fi
+    % the 2025 kernel turns links back on after the footer; end every page
+    % with them off so the next page's background is not caught
+    \AddToHook{shipout/foreground}{\iclr@linkoff}%
+    \AddToHook{enddocument/afterlastpage}{\iclr@check}%
+  }{%
+    \PackageInfo{iclr2027_conference}{DVI output, nothing changed}%
+  }}
+
+% Say so instead of failing quietly if \@outputpage was replaced later.
+\def\iclr@check{%
+  \ifnum\ReadonlyShipoutCounter>\z@
+    \ifnum\iclr@pages=\z@
+      \PackageError{iclr2027_conference}{Pages were shipped but the fix never ran;
+        \string\@outputpage\space was replaced after \string\begin{document}}{}%
+    \else
+      \ifnum\iclr@pages<\ReadonlyShipoutCounter
+        \PackageWarningNoLine{iclr2027_conference}{%
+          \the\numexpr\ReadonlyShipoutCounter-\iclr@pages\relax\space of
+          \the\ReadonlyShipoutCounter\space pages did not go through
+          \string\@outputpage\space and were not treated}%
+      \fi
+    \fi
+  \fi}
+\endinput
